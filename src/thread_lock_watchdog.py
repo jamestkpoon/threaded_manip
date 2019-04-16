@@ -35,12 +35,6 @@ def alignment_check(af_tf_msg, axis,axis_lin_ofs, pos_thresh,eul_thresh):
     
     return pos_ok_ and rot_ok_
     
-def set_thread_lock(svc, fastener_name,axis,pitch,flag):
-    res_ = svc(ThreadLockRequest(fastener_name=fastener_name,
-        axis=axis, pitch=pitch, attach_flag=flag))
-        
-    return res_.ok
-    
 
 
 if __name__ == '__main__':
@@ -70,13 +64,15 @@ if __name__ == '__main__':
                 manip_params_['attach_pos_thresh'], manip_params_['attach_eul_thresh'])
                 
             if not connected_ and tchk_: # lock
-                tl_res_ = set_thread_lock(thread_lock_svc_,
-                    manip_params_['fastener_name'], manip_params_['attach_axis'], manip_params_['pitch'], True)
+                tl_res_ = thread_lock_svc_(ThreadLockRequest(
+                    fastener_name=manip_params_['fastener_name'], attach_flag=True,
+                    axis=manip_params_['attach_axis'], pitch=manip_params_['pitch'])).ok
                 connected_ = True
                 print("  Threaded '%s' and '%s'" % (manip_params_['attach_name'], manip_params_['fastener_name']))
             elif connected_ and not tchk_: # unlock
-                tl_res_ = set_thread_lock(thread_lock_svc_,
-                    manip_params_['fastener_name'], manip_params_['attach_axis'], manip_params_['pitch'], False)
+                tl_res_ = thread_lock_svc_(ThreadLockRequest(
+                    fastener_name=manip_params_['fastener_name'], attach_flag=False,
+                    axis=manip_params_['attach_axis'], pitch=manip_params_['pitch'])).ok
                 connected_ = False
                 print("  Un-threaded '%s' and '%s'" % (manip_params_['attach_name'], manip_params_['fastener_name']))
         
