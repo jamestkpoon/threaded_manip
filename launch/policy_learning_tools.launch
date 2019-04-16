@@ -1,0 +1,28 @@
+<launch>
+
+  <group ns="mujoco_rand">
+    <group ns="io">
+      <rosparam>
+        template_fp: /home/james/catkin_ws/src/robots/mujoco_ros/mujoco_files/ur5_threaded_manip__rand_template.xml
+        rand_fp: /home/james/catkin_ws/src/robots/mujoco_ros/mujoco_files/ur5_threaded_manip__rand.xml
+      </rosparam>
+    </group>
+    <group ns="visual">
+      <rosparam>
+        keys: [ apple, banana, rhinoceros ]
+        mean: [ 2.0, 2.3, 4.1 ]
+        noise: [ 1.0, 1.0, 1.0, 3 ]      
+      </rosparam>
+    </group>
+    <group ns="physical">
+      <rosparam>
+        
+      </rosparam>
+    </group>
+    
+    <node name="mujoco_randomizer" pkg="threaded_manip" type="randomize_mujoco.py" output="screen"/>
+  </group>
+  
+  <node name="policylearn_tools" pkg="threaded_manip" type="policy_learning_tools.py" output="screen"/>
+
+</launch>
