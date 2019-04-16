@@ -1,0 +1,23 @@
+<launch>
+
+  <include file="$(find mujoco_ros)/mujoco_ros.launch"/>
+  
+  <group ns="nut_manip">
+    <rosparam>
+      fastener_name: nut
+      attach_name: shaft
+      attach_axis: z
+      attach_axis_linear_offset: 0.01
+      attach_pos_thresh: 0.005
+      attach_eul_thresh: 0.02
+      pitch: 0.015
+    </rosparam>
+    
+    <node name="threaded_manip_watchdog" pkg="threaded_manip" type="thread_lock_watchdog.py" output="screen"/>
+  </group>
+  
+  <node name="image_view" pkg="image_view" type="image_view" output="screen" args="image:=/mujoco/ros_cam/rgb"/>
+  
+  <node name="policylearn_tools" pkg="threaded_manip" type="policy_learning_tools.py" output="screen"/>
+
+</launch>
