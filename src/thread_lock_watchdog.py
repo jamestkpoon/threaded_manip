@@ -30,6 +30,7 @@ def alignment_check(af_tf_msg, axis,axis_lin_ofs, pos_thresh,eul_thresh):
         abr_ = [ eul_[0], eul_[1] ]
     else: return False
     
+    # check thresholds
     pos_ok_ = np.all(np.fabs(abt_) <= pos_thresh) and (axis_pos_ <= axis_lin_ofs)
     rot_ok_ = np.all(np.fabs(abr_) <= eul_thresh)
     
@@ -64,13 +65,13 @@ if __name__ == '__main__':
                 manip_params_['attach_pos_thresh'], manip_params_['attach_eul_thresh'])
                 
             if not connected_ and tchk_: # lock
-                tl_res_ = thread_lock_svc_(ThreadLockRequest(
+                tl_ok_ = thread_lock_svc_(ThreadLockRequest(
                     fastener_name=manip_params_['fastener_name'], attach_flag=True,
                     axis=manip_params_['attach_axis'], pitch=manip_params_['pitch'])).ok
                 connected_ = True
                 print("  Threaded '%s' and '%s'" % (manip_params_['attach_name'], manip_params_['fastener_name']))
             elif connected_ and not tchk_: # unlock
-                tl_res_ = thread_lock_svc_(ThreadLockRequest(
+                tl_ok_ = thread_lock_svc_(ThreadLockRequest(
                     fastener_name=manip_params_['fastener_name'], attach_flag=False,
                     axis=manip_params_['attach_axis'], pitch=manip_params_['pitch'])).ok
                 connected_ = False
