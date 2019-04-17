@@ -1,22 +1,15 @@
 <launch>
 
-  <group ns="mujoco_rand">
-    <group ns="io">
+  <group ns="mujoco/rand">
+    <group ns="textural">
       <rosparam>
-        template_fp: /home/james/catkin_ws/src/robots/mujoco_ros/mujoco_files/ur5_threaded_manip__rand_template.xml
-        rand_fp: /home/james/catkin_ws/src/robots/mujoco_ros/mujoco_files/ur5_threaded_manip__rand.xml
-      </rosparam>
-    </group>
-    <group ns="visual">
-      <rosparam>
-        keys: [ apple, banana, rhinoceros ]
-        mean: [ 2.0, 2.3, 4.1 ]
-        noise: [ 1.0, 1.0, 1.0, 3 ]      
+        BaseMat: [ 0.2,0.2,0.2,0.2, 0.5,0.5,0.5,0.0 ]
+        ShaftMat: [ 0.2,0.2,0.2,0.2, 0.2,0.2,0.2,0.0 ]      
       </rosparam>
     </group>
     <group ns="physical">
       <rosparam>
-        
+        base: [ 0.01,0.01,0.0, 0.0,0.0,0.1 ]
       </rosparam>
     </group>
     

@@ -4,22 +4,23 @@
 
   <node name="image_view" pkg="image_view" type="image_view" output="screen" args="image:=/mujoco/ros_cam/rgb"/>
 
-  <group ns="nut_manip">
-    <rosparam>
-      fastener_name: nut
-      attach_name: shaft
-      attach_axis: z
-      attach_axis_linear_offset: 0.01
-      attach_pos_thresh: 0.005
-      attach_eul_thresh: 0.05
-      pitch: 0.015
-    </rosparam>
+  <group ns="mujoco">
+    <group ns="nut">
+      <rosparam>
+        attach_name: shaft
+        attach_axis: z
+        attach_axis_linear_offset: 0.01
+        attach_pos_thresh: 0.005
+        attach_eul_thresh: 0.05
+        pitch: 0.015
+      </rosparam>
+    </group>
     
-    <node name="threaded_manip_watchdog" pkg="threaded_manip" type="thread_lock_watchdog.py" output="screen"/>
+    <node name="threaded_manip_watchdog" pkg="threaded_manip" type="thread_lock_watchdog.py" output="screen" args="nut"/>
   </group>
   
   
-  
-  <include file="$(find threaded_manip)/launch/policy_learning_tools.launch"/>
+  <arg name="policy_learning" default="false"/>
+  <include file="$(find threaded_manip)/launch/policy_learning_tools.launch" if="$(arg policy_learning)"/>
 
 </launch>
