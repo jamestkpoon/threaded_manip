@@ -35,7 +35,8 @@ if __name__ == '__main__':
             material_names=params_tex_.keys(), noise=tex_noise_flat_))
         # physical
         rand_phys_svc_(RandomizePhysicalAttributeRequest(
-            body_names=params_phys_.keys(), noise=phys_noise_flat_))
+            body_names=params_phys_.keys(), noise=phys_noise_flat_,
+            hold_6dof_children=[True] * len(params_phys_.keys())))
         
         return []
         
