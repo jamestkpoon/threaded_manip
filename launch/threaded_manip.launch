@@ -4,7 +4,8 @@
 
   <node name="image_view" pkg="image_view" type="image_view" output="screen" args="image:=/mujoco/ros_cam/rgb"/>
 
-  <group ns="mujoco">
+  <arg name="threaded_obj_handling" default="false"/>
+  <group ns="mujoco" if="$(arg threaded_obj_handling)">
     <group ns="nut">
       <rosparam>
         attach_name: shaft
@@ -18,7 +19,6 @@
     
     <node name="threaded_manip_watchdog" pkg="threaded_manip" type="thread_lock_watchdog.py" output="screen" args="nut"/>
   </group>
-  
   
   <arg name="policy_learning" default="false"/>
   <include file="$(find threaded_manip)/launch/policy_learning_tools.launch" if="$(arg policy_learning)"/>

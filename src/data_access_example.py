@@ -10,6 +10,30 @@ import numpy as np
 
 
 
+def wait_for_ur5_to_stop_moving():
+    rospy.sleep(0.1)
+    moving_ = rospy.get_param('/mujoco/ur5/moving')
+    while moving_:
+        rospy.sleep(0.05)
+        moving_ = rospy.get_param('/mujoco/ur5/moving')
+
+def grab_the_nut(jpos_pub, gripper_pub):
+    # move arm above nut
+    jpos_pub.publish(Float32MultiArray(
+        data=(0.16444053217068055, -0.8873331224531231, 0.9359561695790948, 1.5221841506350873, 1.570794522905687, 0.1644331857506687)))
+    wait_for_ur5_to_stop_moving()
+    jpos_pub.publish(Float32MultiArray(
+        data=(0.16444053217068055, -0.8464304987538576, 1.111644361804554, 1.305593334710362, 1.570794522905687, 0.1644331857506687)))
+    wait_for_ur5_to_stop_moving()
+
+    # grab the nut
+    gripper_pub.publish(Bool(data=True))
+    rospy.sleep(2.0)
+    
+    return (rospy.get_param('/mujoco/ur5/grasped_object') == 'nut')
+
+
+
 if __name__ == '__main__':
 
     rospy.init_node('mujoco_ros_py', anonymous=True)
@@ -18,40 +42,20 @@ if __name__ == '__main__':
     jpos_pub_ = rospy.Publisher('/mujoco/ur5/command/joint_positions', Float32MultiArray, queue_size=1)
     gripper_pub_ = rospy.Publisher('/mujoco/ur5/command/gripper', Bool, queue_size=1)
 
-    def wait_for_ur5_to_stop_moving():
-        rospy.sleep(0.1)
-        moving_ = rospy.get_param('/mujoco/ur5/moving')
-        while moving_:
-            rospy.sleep(0.05)
-            moving_ = rospy.get_param('/mujoco/ur5/moving')
 
-    def grab_the_nut():
-        # move arm above nut
-        jpos_pub_.publish(Float32MultiArray(
-            data=(0.16444053217068055, -0.8873331224531231, 0.9359561695790948, 1.5221841506350873, 1.570794522905687, 0.1644331857506687)))
-        wait_for_ur5_to_stop_moving()
-        jpos_pub_.publish(Float32MultiArray(
-            data=(0.16444053217068055, -0.8464304987538576, 1.111644361804554, 1.305593334710362, 1.570794522905687, 0.1644331857506687)))
-        wait_for_ur5_to_stop_moving()
-
-        # grab the nut
-        gripper_pub_.publish(Bool(data=True))
-        rospy.sleep(2.0)
-        
-        return rospy.get_param('/mujoco/ur5/gripped_object') == 'nut'
     
     
     
 
     # reset service client
-    reset_svc_ = rospy.ServiceProxy('/mujoco/reset', Empty)
-    
-    rospy.sleep(1.0)
-    
-    
+    reset_svc_ = rospy.ServiceProxy('/mujoco/reset', Empty)    
+    rospy.sleep(1.0)    
+    reset_svc_(EmptyRequest())
+        
+        
     
     # grab the nut
-    print(grab_the_nut())
+    print(grab_the_nut(jpos_pub_, gripper_pub_))
     
     
     # get joint positions and velocities
@@ -87,4 +91,4 @@ if __name__ == '__main__':
 
     # reset simulation
     rospy.sleep(3)
-    reset_svc_(EmptyRequest())
+#    reset_svc_(EmptyRequest())
