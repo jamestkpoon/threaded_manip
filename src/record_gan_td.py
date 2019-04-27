@@ -21,13 +21,14 @@ from PIL import Image as PILImage
 canonical_img_dir = '/media/james/Storage/gans/threaded_manip/canonical/'
 randomized_img_dir = '/media/james/Storage/gans/threaded_manip/randomized/'
 
-px_r = [ 0.4, 0.65 ]; py_r = [ -0.3, 0.3 ]; pz_r = [ 0.03, 0.3 ]
+px_r = [ 0.4, 0.65 ]; py_r = [ -0.25, 0.25 ]; pz_r = [ 0.02, 0.25 ]
 rr_r = [ -np.pi, np.pi ]; rp_r = [ np.pi * 0.4, np.pi * 0.6 ]; ry_r = [ -np.pi, np.pi ]
 
-N_TD = 2e2
-RANDS_PER_POSE = 10
+N_TD = 1e3
+RANDS_PER_POSE = 5
 
 NUT_RELPOS_THR = 0.01
+MJ_PAUSE = 0.03
 
 
 
@@ -90,15 +91,15 @@ if __name__ == '__main__':
         return [ res_.relpose.position.x, res_.relpose.position.y, res_.relpose.position.z ]
         
         
-    def robot_pose_ok():
+    def scenario_ok():
         relpos_a_ = relpos('ee_link', 'nut')        
-        move_to_random_pose(ik_svc_, m2j_svc_)
+        move_to_random_pose(ik_svc_, m2j_svc_); rospy.sleep(MJ_PAUSE)
         relpos_b_ = relpos('ee_link', 'nut')
         
         diff_ = np.asarray(relpos_b_) - np.asarray(relpos_a_)
         hyp_ = np.sqrt(np.sum(np.square(diff_)))
         
-        return hyp_ <= NUT_RELPOS_THR
+        return (hyp_ <= NUT_RELPOS_THR)
 
 
 
@@ -124,14 +125,14 @@ if __name__ == '__main__':
     i = 0
     
     while i < int(N_TD):
-        if init() and robot_pose_ok():
+        if init() and scenario_ok():
     
             # save images
             for _ in range(RANDS_PER_POSE):
                 i_str_ = str(i); i += 1
                 
                 # randomize object pose(s) and save a 'canonical' image
-                rand_phys_svc_(EmptyRequest()); rospy.sleep(0.02)
+                rand_phys_svc_(EmptyRequest()); rospy.sleep(MJ_PAUSE)
                 
                 save_camera_image(canonical_img_dir+i_str_+'.jpg', '/mujoco/ros_cam/rgb')
                 
@@ -140,5 +141,5 @@ if __name__ == '__main__':
                 save_camera_image(randomized_img_dir+i_str_+'.jpg', '/mujoco/ros_cam/rgb')
                 
                 # de-randomize poses/textures
-                derand_phys_svc_(EmptyRequest()); rospy.sleep(0.02)
+                derand_phys_svc_(EmptyRequest()); rospy.sleep(MJ_PAUSE)
                 derand_tex_svc_(EmptyRequest())
