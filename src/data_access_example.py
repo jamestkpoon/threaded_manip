@@ -29,6 +29,10 @@ def grab_the_nut(jpos_pub, gripper_pub):
     # grab the nut
     gripper_pub.publish(Bool(data=True))
     rospy.sleep(2.0)
+
+    jpos_pub.publish(Float32MultiArray(
+        data=(0.16444053217068055, -0.8873331224531231, 0.9359561695790948, 1.5221841506350873, 1.570794522905687, 0.1644331857506687)))
+    wait_for_ur5_to_stop_moving()
     
     return (rospy.get_param('/mujoco/ur5/grasped_object') == 'nut')
 
