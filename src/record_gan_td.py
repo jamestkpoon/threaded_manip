@@ -24,7 +24,8 @@ randomized_img_dir = '/media/james/Storage/gans/threaded_manip/randomized/'
 px_r = [ 0.4, 0.65 ]; py_r = [ -0.25, 0.25 ]; pz_r = [ 0.02, 0.25 ]
 rr_r = [ -np.pi, np.pi ]; rp_r = [ np.pi * 0.4, np.pi * 0.6 ]; ry_r = [ -np.pi, np.pi ]
 
-N_TD = 1e3
+START_I = 56945
+N_TD = 1e5
 RANDS_PER_POSE = 5
 
 NUT_RELPOS_THR = 0.01
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 
 
 
-    i = 0
+    i = START_I
     
     while i < int(N_TD):
         if init() and scenario_ok():
